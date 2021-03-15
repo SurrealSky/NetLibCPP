@@ -87,6 +87,16 @@ bool CNetHttp::perform(HTTP_TYPE nType,std::string strUrl,unsigned int dwPort,By
 		return false;
 }
 
+bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response)
+{
+	return true;
+}
+
+bool CNetHttp::perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response)
+{
+	return true;
+}
+
 
 /**  *	@brief libcurl接收到数据时的回调函数  *  
 *	将接收到的数据保存到本地文件中，同时显示在控制台上。  * 
@@ -98,6 +108,6 @@ bool CNetHttp::perform(HTTP_TYPE nType,std::string strUrl,unsigned int dwPort,By
 size_t process_data(void *buffer, size_t size, size_t nmemb, void *user_p)
 {
 	ByteBuffer *p=static_cast<ByteBuffer *>(user_p);
-	p->append((char *)buffer,nmemb);
+	p->append((unsigned char *)buffer,nmemb);
 	return nmemb;     //返回处理的大小
 }

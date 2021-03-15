@@ -1,7 +1,6 @@
 #pragma once
 #include<vector>
 #include<assert.h>
-#include<string>
 
 #if defined(_MSC_VER)
     //
@@ -58,23 +57,14 @@ public:
         mReadPos = mWritePos = 0;
     }
 
-//末尾插入数据
-    template <typename T>
-        void append(T value)
+	//末尾插入数据
+    template <typename T> void append(T value)
     {
         append((uint8*)&value, sizeof(value));
-    }
-
-//按字符串方式插入末尾数据
-	void append(const char *src, size_t cnt)
-    {
-        return append((const uint8 *)src, cnt);
     }
     void append(const uint8 *src, size_t cnt)
     {
         if (!cnt) return;
-
-        assert(size() < 10000000);
 
         if (mStorage.size() < mWritePos + cnt)
         {
@@ -84,55 +74,37 @@ public:
         mWritePos += cnt;
     }
 
-/*apend特化函数*********************************************/
-template <>
-void append<std::string>(std::string value)
+	/*apend特化函数*********************************************/
+	template <> void append<std::string>(std::string value)
     {
         append(value);
     }
-
-template <>
-void append<ByteBuffer>(ByteBuffer value)
+	template <> void append<ByteBuffer>(ByteBuffer value)
     {
         append(value);
     }
-/*apend特化函数*********************************************/
+	/*apend特化函数*********************************************/
 
-
-//固定位置存入数据，原有数据被覆盖,用于修正数据
-    template <typename T>
-        void put(size_t pos, T value)
+	//固定位置存入数据，原有数据被覆盖,用于修正数据
+    template <typename T> void put(size_t pos, T value)
     {
         put(pos, (uint8*)&value, sizeof(value));
     }
+	//固定位置存入数据，覆盖原有数据
+	void put(size_t pos, const uint8 *src, size_t cnt)
+	{
+		assert(pos + cnt <= size() || PrintPosError(true, pos, cnt));
+		memcpy(&mStorage[pos], src, cnt);
+	}
 
-//任意位置插入数据
-	template <typename T>
-        void insert(size_t pos,T value)
+	//任意位置插入数据
+	template <typename T> void insert(size_t pos,T value)
     {
 		insert(pos,(uint8*)&value,sizeof(value));
     }
-
-	void insert(int pos,const char *src, size_t cnt)
-	{
-		if (!cnt) return;
-
-        assert(size() < 10000000);
-
-		std::vector<uint8>::iterator it=mStorage.begin();
-		unsigned int i = cnt;
-		for (; i > 0; i--)
-		{
-			mStorage.insert(mStorage.begin(), *((uint8*)src + i-1));
-		}
-        mWritePos += cnt;
-	}
-
 	void insert(int pos,const uint8 *src, size_t cnt)
 	{
 		if (!cnt) return;
-
-        assert(size() < 10000000);
 
 		std::vector<uint8>::iterator it=mStorage.begin();
 		unsigned int i = cnt;
@@ -142,16 +114,12 @@ void append<ByteBuffer>(ByteBuffer value)
 		}
         mWritePos += cnt;
 	}
-	
 	//模板的特化
-	template <>
-void insert<std::string>(size_t pos,std::string value)
+	template <> void insert<std::string>(size_t pos,std::string value)
     {
         insert(pos,value);
     }
-
-template <>
-void insert<ByteBuffer>(size_t pos,ByteBuffer value)
+	template <> void insert<ByteBuffer>(size_t pos,ByteBuffer value)
     {
         insert(pos,value);
     }
@@ -319,7 +287,7 @@ private:
             }
             strValue += c;
         }
-        strncpy(value, strValue.c_str(), strValue.size());
+        strncpy_s(value, strlen(value),strValue.c_str(), strValue.size());
         return *this;
     }
     /**///////////////////////////////////////////////////////////////////////////
@@ -392,48 +360,46 @@ public:
         if (_Size > size()) mStorage.reserve(_Size);
     };
 
-template <typename T> 
-T reverse(const T value)
-{
-	T ret=0;
-	switch(sizeof(T))
+	//分别对short，int，long long类型数据进行翻转
+	template <typename T> T reverse(const T value)
 	{
-	case 2:
+		T ret=0;
+		switch(sizeof(T))
 		{
-			T a=value&0x00FF;
-			T b=(value>>8)&0xFF;
-			ret=(a<<8)|b;
-		}break;
-	case 4:
-		{
-			T a=value&0xFF;
-			T b=(value>>0x8)&0xFF;
-			T c=(value>>0x10)&0xFF;
-			T d=(value>>0x18)&0xFF;
-			ret=(a<<0x18)|(b<<0x10)|(c<<0x8)|d;
-		}break;
-	case 8:
-		{
-			T a=value&0xFF;
-			T b=(value>>0x8)&0xFF;
-			T c=(value>>0x10)&0xFF;
-			T d=(value>>0x18)&0xFF;
-			T e=(value>>0x20)&0xFF;
-			T f=(value>>0x28)&0xFF;
-			T h=(value>>0x30)&0xFF;
-			T i=(value>>0x38)&0xFF;
-			ret=(a<<0x38)|(b<<0x30)|(c<<0x28)|(d<<0x20)|(e<<0x18)|(f<<0x10)|(h<<0x8)|i;
-		}break;
-	case 1:
-	default:
-		{
-			ret=value;
+		case 2:
+			{
+				T a=value&0x00FF;
+				T b=(value>>8)&0xFF;
+				ret=(a<<8)|b;
+			}break;
+		case 4:
+			{
+				T a=value&0xFF;
+				T b=(value>>0x8)&0xFF;
+				T c=(value>>0x10)&0xFF;
+				T d=(value>>0x18)&0xFF;
+				ret=(a<<0x18)|(b<<0x10)|(c<<0x8)|d;
+			}break;
+		case 8:
+			{
+				T a=value&0xFF;
+				T b=(value>>0x8)&0xFF;
+				T c=(value>>0x10)&0xFF;
+				T d=(value>>0x18)&0xFF;
+				T e=(value>>0x20)&0xFF;
+				T f=(value>>0x28)&0xFF;
+				T h=(value>>0x30)&0xFF;
+				T i=(value>>0x38)&0xFF;
+				ret=(a<<0x38)|(b<<0x30)|(c<<0x28)|(d<<0x20)|(e<<0x18)|(f<<0x10)|(h<<0x8)|i;
+			}break;
+		case 1:
+		default:
+			{
+				ret=value;
+			}
 		}
+		return ret;
 	}
-
-	return ret;
-}
-
 
 	//末尾添加数据
 private:
@@ -445,7 +411,8 @@ private:
     {
         if (buffer.size()) append(buffer.contents(),buffer.size());
     }
-//任意位置插入数据
+	
+	//任意位置插入数据
 private:
 	void insert(const std::string &str)
 	{
@@ -453,13 +420,6 @@ private:
 	void insert(const ByteBuffer &buffer)
 	{
 	}
-//固定位置存入数据，覆盖原有数据
-    void put(size_t pos, const uint8 *src, size_t cnt)
-    {
-        assert(pos + cnt <= size() || PrintPosError(true,pos,cnt));
-        memcpy(&mStorage[pos], src, cnt);
-    }
-
     /**///////////////////////////////////////////////////////////////////////////
 public:
     void print_storage()

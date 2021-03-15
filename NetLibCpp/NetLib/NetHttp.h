@@ -12,6 +12,7 @@
 #endif
 
 #include<string>
+#include<list>
 #include"ByteBuffer.h"
 
 
@@ -31,6 +32,8 @@ public:
 	bool CoInitialize();
 	void UnInitialize();
 	bool perform(HTTP_TYPE,std::string,unsigned int,ByteBuffer*);
+	bool perform_get(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response);
+	bool perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response);
 };
 
 size_t process_data(void *buffer, size_t size, size_t nmemb, void *user_p);
