@@ -119,8 +119,8 @@ bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPor
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
 		//…Ë÷√¥˙¿Ì
-		curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1");
-		curl_easy_setopt(curl, CURLOPT_PROXYPORT, 9999);
+		//curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1");
+		//curl_easy_setopt(curl, CURLOPT_PROXYPORT, 9999);
 
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
