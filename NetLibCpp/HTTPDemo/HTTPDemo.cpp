@@ -2,6 +2,7 @@
 //
 
 #include <iostream>
+#include<fstream>
 #include"../NetLib/NetHttp.h"
 
 #ifdef _DEBUG
@@ -19,7 +20,7 @@ int main()
 	std::string host = "https://play.google.com";
 	std::string url = "/store/apps/details";
 	unsigned int port = 443;
-	std::string querystring = "?id=com.tencent.mobileqq2&hl=zh&gl=US";
+	std::string querystring = "?id=com.tencent.mobileqq&hl=zh&gl=US";
 	std::string body = "111";
 	std::vector<std::string> headers;
 	headers.push_back("Accept-Encoding: gzip, deflate");
@@ -27,29 +28,40 @@ int main()
 	headers.push_back("Accept-Language: zh-cn");
 	headers.push_back("User-Agent: Mozilla/5.0");
 	headers.push_back("Connection: close");
-	ByteBuffer response;
-	http.perform_get(host, url, port, querystring, headers, &response);
-
-	//查找结果
-	std::string value;
-	value.append((char*)response.contents(), response.size());
-	const char* notfindtag = "class=\"uaxL4e\"";
-	const char* findtag = "class=\"AHFaub\"";
-	int pos = value.find(findtag);
-	if (pos != -1)
+	
+	//输入文件
+	std::string file = "C:\\Users\\taiji\\Desktop\\1.txt";
+	std::ifstream in(file);
+	//输出文件
+	std::fstream fusername("C:\\Users\\taiji\\Desktop\\out.txt", std::ios::out | std::ios::app);
+	std::string packetname;
+	while (getline(in, packetname))
 	{
-		//找到了
-		printf("find!\n");
-	}
-	else
-	{
-		pos = value.find(notfindtag);
+		ByteBuffer response;
+		querystring = "?id=" + packetname + "&hl=zh&gl=US";
+		http.perform_get(host, url, port, querystring, headers, &response);
+		//查找结果
+		std::string value;
+		value.append((char*)response.contents(), response.size());
+		const char* notfindtag = "class=\"uaxL4e\"";
+		const char* findtag = "class=\"AHFaub\"";
+		int pos = value.find(findtag);
 		if (pos != -1)
 		{
-			//没有找到
-			printf("no find!\n");
+			//找到了
+			std::string packetname = value.substr(pos,0x20);
+			fusername << packetname.c_str() << ":" <<"" <<std::endl;
+		}
+		else
+		{
+			pos = value.find(notfindtag);
+			if (pos != -1)
+			{
+				//没有找到
+				fusername << packetname.c_str() << ":" << std::endl;
+			}
 		}
 	}
-
+	fusername.close();
 	http.UnInitialize();
 }
