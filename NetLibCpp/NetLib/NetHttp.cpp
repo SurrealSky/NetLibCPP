@@ -87,9 +87,59 @@ bool CNetHttp::perform(HTTP_TYPE nType,std::string strUrl,unsigned int dwPort,By
 		return false;
 }
 
-bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response)
+bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPort,std::string querystring, std::vector<std::string> headers, ByteBuffer* response)
 {
-	return true;
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_URL, (host+url+ querystring).c_str());
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);  //设置访问的超时
+		curl_easy_setopt(curl, CURLOPT_PORT, dwPort);
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &process_data);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
+
+
+		//增加header字段
+		struct curl_slist* chunk = NULL;
+		for (int i = 0; i < headers.size(); i++)
+		{
+			chunk = curl_slist_append(chunk, headers[i].c_str());
+		}
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+
+		//设置query string.
+		//curl_easy_setopt(curl, CURLOPT_HTTPGET, querystring);
+
+		//设置支持自动解压
+		curl_easy_setopt(curl, CURLOPT_ENCODING,"gzip");
+
+		//SKIP_PEER_VERIFICATION
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		//SKIP_HOSTNAME_VERIFICATION
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+		//设置代理
+		curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1");
+		curl_easy_setopt(curl, CURLOPT_PROXYPORT, 9999);
+
+		CURLcode res = curl_easy_perform(curl);
+		if (res != CURLE_OK)
+		{
+			return false;
+		}
+		long retcode = 0;
+		res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &retcode);
+		if ((res == CURLE_OK) && retcode == 200)
+		{
+			long long length = 0;
+			res = curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &length);
+			//处理接收到的数据
+			return true;
+		}
+		return false;
+	}
+	else
+		return false;
 }
 
 bool CNetHttp::perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response)

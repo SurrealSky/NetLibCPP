@@ -12,7 +12,7 @@
 #endif
 
 #include<string>
-#include<list>
+#include<vector>
 #include"ByteBuffer.h"
 
 
@@ -32,7 +32,7 @@ public:
 	bool CoInitialize();
 	void UnInitialize();
 	bool perform(HTTP_TYPE,std::string,unsigned int,ByteBuffer*);
-	bool perform_get(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response);
+	bool perform_get(std::string host, std::string url, unsigned int dwPort, std::string querystring,std::vector<std::string> headers,ByteBuffer* response);
 	bool perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response);
 };
 
