@@ -1,6 +1,7 @@
 #pragma once
 #include<vector>
 #include<assert.h>
+#include<string>
 
 #if defined(_MSC_VER)
     //
