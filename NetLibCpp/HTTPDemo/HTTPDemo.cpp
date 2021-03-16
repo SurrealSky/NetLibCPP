@@ -134,11 +134,11 @@ void common_get()
 	headers.push_back("Connection: close");
 
 	//输入文件
-	std::string file = "C:\\Users\\taiji\\Desktop\\query\\in\\16.txt";
+	std::string file = "C:\\Users\\taiji\\Desktop\\query\\in\\39.txt";
 	std::ifstream in(file);
 	//输出文件
-	std::fstream fusername1("C:\\Users\\taiji\\Desktop\\query\\out\\16.txt", std::ios::out | std::ios::app);
-	std::fstream fusername2("C:\\Users\\taiji\\Desktop\\query\\out\\16unknow.txt", std::ios::out | std::ios::app);
+	std::fstream fusername1("C:\\Users\\taiji\\Desktop\\query\\out\\39.txt", std::ios::out | std::ios::app);
+	std::fstream fusername2("C:\\Users\\taiji\\Desktop\\query\\out\\39unknow.txt", std::ios::out | std::ios::app);
 	std::string packetname;
 	std::string appname = "";
 	while (getline(in, packetname))
