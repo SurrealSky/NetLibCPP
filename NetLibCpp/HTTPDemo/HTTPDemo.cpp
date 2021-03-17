@@ -12,58 +12,31 @@
 #endif
 #
 
-void test_google()
+bool test_google(CNetHttp& http, std::vector<std::string>& headers, std::string packetname, std::string& appname)
 {
-	CNetHttp http;
-	http.CoInitialize();
 	std::string host = "https://play.google.com";
 	std::string url = "/store/apps/details";
 	unsigned int port = 443;
-	std::string querystring = "?id=com.tencent.mobileqq&hl=zh&gl=US";
-	std::vector<std::string> headers;
-	headers.push_back("Accept-Encoding: gzip, deflate");
-	headers.push_back("Accept: image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/x-shockwave-flash, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-ms-application, application/x-ms-xbap, application/vnd.ms-xpsdocument, application/xaml+xml, */*");
-	headers.push_back("Accept-Language: zh-cn");
-	headers.push_back("User-Agent: Mozilla/5.0");
-	headers.push_back("Connection: close");
 
-	//输入文件
-	std::string file = "C:\\Users\\taiji\\Desktop\\1.txt";
-	std::ifstream in(file);
-	//输出文件
-	std::fstream fusername("C:\\Users\\taiji\\Desktop\\out.txt", std::ios::out | std::ios::app);
-	std::string packetname;
-	while (getline(in, packetname))
+	ByteBuffer response;
+	std::string querystring = "?id=" + packetname + "&hl=zh&gl=US";
+	http.perform_get(host, url, port, querystring, headers, &response);
+	//查找结果
+	std::string value;
+	value.append((char*)response.contents(), response.size());
+	const char* notfindtag = "class=\"uaxL4e\"";
+	const char* findtag = "class=\"AHFaub\"";
+	int pos = value.find(findtag);
+	if (pos != -1)
 	{
-		ByteBuffer response;
-		querystring = "?id=" + packetname + "&hl=zh&gl=US";
-		http.perform_get(host, url, port, querystring, headers, &response);
-		//查找结果
-		std::string value;
-		value.append((char*)response.contents(), response.size());
-		const char* notfindtag = "class=\"uaxL4e\"";
-		const char* findtag = "class=\"AHFaub\"";
-		int pos = value.find(findtag);
-		if (pos != -1)
-		{
-			//找到了
-			std::string appname = value.substr(pos + 0x25, 0x50);
-			pos = appname.find_first_of('<');
-			appname = appname.substr(0, pos);
-			fusername << packetname.c_str() << ":" << appname << std::endl;
-		}
-		else
-		{
-			pos = value.find(notfindtag);
-			if (pos != -1)
-			{
-				//没有找到
-				fusername << packetname.c_str() << ":" << std::endl;
-			}
-		}
+		//找到了
+		appname = value.substr(pos + 0x25, 0x50);
+		pos = appname.find_first_of('<');
+		appname = appname.substr(0, pos);
+		return true;
 	}
-	fusername.close();
-	http.UnInitialize();
+	appname = "";
+	return false;
 }
 
 bool test_yingyongbao(CNetHttp& http, std::vector<std::string>& headers, std::string packetname, std::string& appname)
@@ -120,8 +93,6 @@ bool test_xiaomi(CNetHttp& http,std::vector<std::string> &headers,std::string pa
 	return false;
 }
 
-
-
 void common_get()
 {
 	CNetHttp http;
@@ -143,19 +114,29 @@ void common_get()
 	std::string appname = "";
 	while (getline(in, packetname))
 	{
-		if (test_xiaomi(http, headers, packetname, appname))
+		//if (test_xiaomi(http, headers, packetname, appname))
+		//{
+		//	//先查询小米
+		//	fusername1 << packetname.c_str() << ":" << appname.c_str() << std::endl;
+		//}
+		//else
+		//{
+		//	//再查询腾讯应用宝
+		//	if (test_yingyongbao(http, headers, packetname, appname))
+		//	{
+		//		fusername1 << packetname.c_str() << ":" << appname.c_str() << std::endl;
+		//	}else
+		//		fusername2 << packetname.c_str()  << std::endl;
+		//}
+
+		//查询google
+		if (test_google(http, headers, packetname, appname))
 		{
-			//先查询小米
 			fusername1 << packetname.c_str() << ":" << appname.c_str() << std::endl;
 		}
 		else
 		{
-			//再查询腾讯应用宝
-			if (test_yingyongbao(http, headers, packetname, appname))
-			{
-				fusername1 << packetname.c_str() << ":" << appname.c_str() << std::endl;
-			}else
-				fusername2 << packetname.c_str()  << std::endl;
+			fusername2 << packetname.c_str() << std::endl;
 		}
 	}
 	fusername1.close();
