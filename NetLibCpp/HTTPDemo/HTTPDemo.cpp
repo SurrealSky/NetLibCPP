@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include<fstream>
+#include<map>
 #include"../NetLib/NetHttp.h"
 
 #ifdef _DEBUG
@@ -144,8 +145,78 @@ void common_get()
 	http.UnInitialize();
 }
 
+std::map<std::string, std::string> allresult;
+std::map<std::string, std::string> lbskey;
+std::map<std::string, std::string> yjtzmkey;
+
+void cls_repeated()
+{
+	//去重并读入到map
+
+
+	//读取LBS应用字典
+	std::string file_lbs = "C:\\Users\\taiji\\Desktop\\query\\in\\LBS.txt";
+	std::ifstream in1(file_lbs);
+	std::string line = "";
+	while (getline(in1, line))
+	{
+		if (lbskey.find(line) == lbskey.end())
+		{
+			lbskey.insert(std::pair<std::string, std::string>(line, line));
+		}
+	}
+	in1.close();
+	//读取硬件特征码字典
+	std::string file_yjtzm = "C:\\Users\\taiji\\Desktop\\query\\in\\yingjiantezhengma.txt";
+	std::ifstream in2(file_yjtzm);
+	line = "";
+	while (getline(in2, line))
+	{
+		if (yjtzmkey.find(line) == yjtzmkey.end())
+		{
+			yjtzmkey.insert(std::pair<std::string, std::string>(line, line));
+		}
+	}
+	in1.close();
+
+	//输出文件
+	std::fstream fusername1("C:\\Users\\taiji\\Desktop\\query\\out_result\\out_LBS.txt", std::ios::out | std::ios::app);
+	std::fstream fusername2("C:\\Users\\taiji\\Desktop\\query\\out_result\\out_YJTZM.txt", std::ios::out | std::ios::app);
+
+	std::string file = "C:\\Users\\taiji\\Desktop\\query\\out_result\\1.txt";
+	std::ifstream in(file);
+	std::string packetname = "";
+	std::string appname = "";
+	line = "";
+	while (getline(in, line))
+	{
+		int pos = line.find_first_of(':');
+		if (pos == -1) continue;
+		packetname = line.substr(0, pos);
+		appname = line.substr(pos + 1);
+		
+		if (allresult.find(packetname) == allresult.end())
+		{
+			//没找到
+			allresult.insert(std::pair<std::string, std::string>(packetname, appname));
+			if (lbskey.find(packetname) != lbskey.end())
+			{
+				fusername1 << packetname << ":" << appname << std::endl;
+			}
+			if (yjtzmkey.find(packetname) != yjtzmkey.end())
+			{
+				fusername2 << packetname << ":" << appname << std::endl;
+			}
+		}
+	}
+	in.close();
+
+	fusername1.close();
+	fusername2.close();
+}
+
 int main()
 {
 	// TODO: 在此添加控件通知处理程序代码
-	common_get();
+	cls_repeated();
 }
