@@ -11,7 +11,6 @@
 #else
 #pragma comment(lib, "..\\Lib\\NetLib.lib")
 #endif
-#
 
 bool test_google(CNetHttp& http, std::vector<std::string>& headers, std::string packetname, std::string& appname)
 {

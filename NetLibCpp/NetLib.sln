@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HTTPDemo", "HTTPDemo\HTTPDe
 		{38C59DDD-08C8-4E49-A227-A9D601ECC52D} = {38C59DDD-08C8-4E49-A227-A9D601ECC52D}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CVE20190708SCAN", "CVE20190708SCAN\CVE20190708SCAN.vcxproj", "{4C879C98-3838-4D2E-9210-D43D55DF27F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -43,6 +45,14 @@ Global
 		{C497785A-1C75-40E2-8914-D3FFB44DE273}.Release|Win32.Build.0 = Release|Win32
 		{C497785A-1C75-40E2-8914-D3FFB44DE273}.Release|x64.ActiveCfg = Release|x64
 		{C497785A-1C75-40E2-8914-D3FFB44DE273}.Release|x64.Build.0 = Release|x64
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Debug|Win32.Build.0 = Debug|Win32
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Debug|x64.ActiveCfg = Debug|x64
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Debug|x64.Build.0 = Debug|x64
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Release|Win32.ActiveCfg = Release|Win32
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Release|Win32.Build.0 = Release|Win32
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Release|x64.ActiveCfg = Release|x64
+		{4C879C98-3838-4D2E-9210-D43D55DF27F3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
