@@ -10,7 +10,7 @@
 #pragma comment(lib, "..\\Lib\\NetLib.lib")
 #endif
 
-#define _CRT_SECURE_NO_WARNINGS 1
+//#define _CRT_SECURE_NO_WARNINGS 1
 #include "rdesktop.h"
 #include "orders.h"
 #include "mst120.h"
@@ -204,7 +204,7 @@ randomize_username(void)
     size_t i;
     char* result;
 
-    result = xmalloc(10);
+    result = (char*)xmalloc(10);
 
     for (i = 0; i < 8 && x; i++, x /= 32) {
         static const char chars[] = "abcdfghijklmnopqrsuvwxyz0123456789";
@@ -461,7 +461,7 @@ parse_commandline(struct command_line* cfg, int argc, char* argv[])
             }
         }
         else {
-            cfg->targets = xrealloc(cfg->targets, (cfg->target_count + 2) * sizeof(char*));
+            cfg->targets = (char**)xrealloc(cfg->targets, (cfg->target_count + 2) * sizeof(char*));
             cfg->targets[cfg->target_count++] = xstrdup(argv[i]);
             cfg->targets[cfg->target_count] = NULL; /* null termiante this list */
         }
@@ -470,7 +470,7 @@ parse_commandline(struct command_line* cfg, int argc, char* argv[])
 
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     unsigned flags = 0;
     char domain[32] = "";
@@ -533,7 +533,7 @@ int main()
                 (ip >> 8) & 0xFF,
                 (ip >> 0) & 0xFF
             );
-            cfg.targets = xrealloc(cfg.targets, (cfg.target_count + 2) * sizeof(char*));
+            cfg.targets = (char**)xrealloc(cfg.targets, (cfg.target_count + 2) * sizeof(char*));
             cfg.targets[cfg.target_count++] = xstrdup(ipstr);
             cfg.targets[cfg.target_count] = NULL; /* null termiante this list */
         }
