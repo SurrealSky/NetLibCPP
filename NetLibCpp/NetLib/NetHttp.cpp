@@ -87,23 +87,24 @@ bool CNetHttp::perform(HTTP_TYPE nType,std::string strUrl,unsigned int dwPort,By
 		return false;
 }
 
-bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPort,std::string querystring, std::vector<std::string> headers, ByteBuffer* response)
+bool CNetHttp::perform_get(bool isProxy, bool isdefinePort,ByteBuffer* response)
 {
 	if (curl)
 	{
-		curl_easy_setopt(curl, CURLOPT_URL, (host+url+ querystring).c_str());
+		curl_easy_setopt(curl, CURLOPT_URL, (http.host + http.url + http.querystring).c_str());
 		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);  //设置访问的超时
-		curl_easy_setopt(curl, CURLOPT_PORT, dwPort);
+		if(isdefinePort)
+			curl_easy_setopt(curl, CURLOPT_PORT, http.dwPort);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &process_data);
 		curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
 
 
 		//增加header字段
 		struct curl_slist* chunk = NULL;
-		for (int i = 0; i < headers.size(); i++)
+		for (int i = 0; i < http.headers.size(); i++)
 		{
-			chunk = curl_slist_append(chunk, headers[i].c_str());
+			chunk = curl_slist_append(chunk, http.headers[i].c_str());
 		}
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 
@@ -111,7 +112,7 @@ bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPor
 		//curl_easy_setopt(curl, CURLOPT_HTTPGET, querystring);
 
 		//设置支持自动解压
-		curl_easy_setopt(curl, CURLOPT_ENCODING,"gzip");
+		curl_easy_setopt(curl, CURLOPT_ENCODING, "gzip");
 
 		//SKIP_PEER_VERIFICATION
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -119,8 +120,11 @@ bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPor
 		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
 		//设置代理
-		curl_easy_setopt(curl, CURLOPT_PROXY, "127.0.0.1");
-		curl_easy_setopt(curl, CURLOPT_PROXYPORT, 9999);
+		if (isProxy)
+		{
+			curl_easy_setopt(curl, CURLOPT_PROXY, http.proxy);
+			curl_easy_setopt(curl, CURLOPT_PROXYPORT, http.proxyport);
+		}
 
 		CURLcode res = curl_easy_perform(curl);
 		if (res != CURLE_OK)
@@ -142,7 +146,7 @@ bool CNetHttp::perform_get(std::string host, std::string url, unsigned int dwPor
 		return false;
 }
 
-bool CNetHttp::perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response)
+bool CNetHttp::perform_post(bool isProxy, bool isdefinePort, ByteBuffer* response)
 {
 	return true;
 }

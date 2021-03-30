@@ -22,18 +22,30 @@ enum HTTP_TYPE
 	TYPE_GET
 };
 
+typedef struct _HttpStruct
+{
+	std::string host;
+	std::string url;
+	std::string querystring;
+	unsigned int dwPort;
+	std::vector<std::string> headers;
+	std::string proxy;
+	unsigned int proxyport;
+}HttpStruct,*PHttpStruct;
+
 class DIPPEREXPORTS_CNetHttp_API CNetHttp
 {
 public:
 	CNetHttp(void);
 	~CNetHttp(void);
-
+public:
+	HttpStruct	http;
 public:
 	bool CoInitialize();
 	void UnInitialize();
 	bool perform(HTTP_TYPE,std::string,unsigned int,ByteBuffer*);
-	bool perform_get(std::string host, std::string url, unsigned int dwPort, std::string querystring,std::vector<std::string> headers,ByteBuffer* response);
-	bool perform_post(std::string host, std::string url, unsigned int dwPort, ByteBuffer* response);
+	bool perform_get(bool isProxy,bool isdefinePort,ByteBuffer* response);
+	bool perform_post(bool isProxy, bool isdefinePort,ByteBuffer* response);
 };
 
 size_t process_data(void *buffer, size_t size, size_t nmemb, void *user_p);
