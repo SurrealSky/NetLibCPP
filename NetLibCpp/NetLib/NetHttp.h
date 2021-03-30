@@ -31,6 +31,8 @@ typedef struct _HttpStruct
 	std::vector<std::string> headers;
 	std::string proxy;
 	unsigned int proxyport;
+	unsigned int retCode;
+	ByteBuffer	response;
 }HttpStruct,*PHttpStruct;
 
 class DIPPEREXPORTS_CNetHttp_API CNetHttp
@@ -44,8 +46,8 @@ public:
 	bool CoInitialize();
 	void UnInitialize();
 	bool perform(HTTP_TYPE,std::string,unsigned int,ByteBuffer*);
-	bool perform_get(bool isProxy,bool isdefinePort,ByteBuffer* response);
-	bool perform_post(bool isProxy, bool isdefinePort,ByteBuffer* response);
+	bool perform_get(bool isProxy,bool isdefinePort);
+	bool perform_post(bool isProxy, bool isdefinePort);
 };
 
 size_t process_data(void *buffer, size_t size, size_t nmemb, void *user_p);

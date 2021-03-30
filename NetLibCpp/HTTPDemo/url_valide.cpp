@@ -15,10 +15,9 @@ bool get_valide(CNetHttp& http, std::string url,std::vector<std::string>& header
 	http.http.url = url;
 	http.http.dwPort = port;
 	http.http.headers = headers;
-	http.perform_get(false,false,&response);
-	if (true)
+	http.perform_get(false,false);
+	if (http.http.retCode == 200 || (http.http.retCode >= 300 && http.http.retCode < 400))
 	{
-		//ур╣╫ак
 		return true;
 	}
 	return false;
@@ -45,7 +44,7 @@ void host_valide(const char *filepath,const char *result)
 	{
 		if (get_valide(http, url,headers))
 		{
-			fresult << url.c_str() << ":" << "ok" << std::endl;
+			fresult << url.c_str() << ":" <<http.http.retCode<< std::endl;
 		}
 	}
 	fresult.close();

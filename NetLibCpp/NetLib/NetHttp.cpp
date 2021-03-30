@@ -87,7 +87,7 @@ bool CNetHttp::perform(HTTP_TYPE nType,std::string strUrl,unsigned int dwPort,By
 		return false;
 }
 
-bool CNetHttp::perform_get(bool isProxy, bool isdefinePort,ByteBuffer* response)
+bool CNetHttp::perform_get(bool isProxy, bool isdefinePort)
 {
 	if (curl)
 	{
@@ -97,7 +97,7 @@ bool CNetHttp::perform_get(bool isProxy, bool isdefinePort,ByteBuffer* response)
 		if(isdefinePort)
 			curl_easy_setopt(curl, CURLOPT_PORT, http.dwPort);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &process_data);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &(http.response));
 
 
 		//Ôö¼Óheader×Ö¶Î
@@ -131,9 +131,8 @@ bool CNetHttp::perform_get(bool isProxy, bool isdefinePort,ByteBuffer* response)
 		{
 			return false;
 		}
-		long retcode = 0;
-		res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &retcode);
-		if ((res == CURLE_OK) && retcode == 200)
+		res = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &http.retCode);
+		if ((res == CURLE_OK) && http.retCode == 200)
 		{
 			long long length = 0;
 			res = curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &length);
@@ -146,7 +145,7 @@ bool CNetHttp::perform_get(bool isProxy, bool isdefinePort,ByteBuffer* response)
 		return false;
 }
 
-bool CNetHttp::perform_post(bool isProxy, bool isdefinePort, ByteBuffer* response)
+bool CNetHttp::perform_post(bool isProxy, bool isdefinePort)
 {
 	return true;
 }

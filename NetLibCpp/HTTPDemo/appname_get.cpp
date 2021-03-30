@@ -6,7 +6,6 @@
 
 bool test_google(CNetHttp& http, std::vector<std::string>& headers, std::string packetname, std::string& appname)
 {
-	ByteBuffer response;
 	http.http.host= "https://play.google.com";
 	http.http.url= "/store/apps/details";
 	http.http.dwPort = 443;
@@ -14,10 +13,10 @@ bool test_google(CNetHttp& http, std::vector<std::string>& headers, std::string 
 	http.http.headers = headers;
 	http.http.proxy = "127.0.0.1";
 	http.http.proxyport = 9999;
-	http.perform_get(true,false, &response);
+	http.perform_get(true,false);
 	//查找结果
 	std::string value;
-	value.append((char*)response.contents(), response.size());
+	value.append((char*)http.http.response.contents(), http.http.response.size());
 	const char* notfindtag = "class=\"uaxL4e\"";
 	const char* findtag = "class=\"AHFaub\"";
 	int pos = value.find(findtag);
@@ -42,10 +41,10 @@ bool test_yingyongbao(CNetHttp& http, std::vector<std::string>& headers, std::st
 	http.http.querystring = "?pkgname=" + packetname;
 	http.http.headers = headers;
 
-	http.perform_get(false, false, &response);
+	http.perform_get(false, false);
 	//查找结果
 	std::string value;
-	value.append((char*)response.contents(), response.size());
+	value.append((char*)http.http.response.contents(), http.http.response.size());
 	const char* notfindtag = "http://a.app.qq.com/error_pages/noApp.jsp";
 	const char* findtag = "itemprop=\"name\"";
 	int pos = value.find(findtag);
@@ -69,10 +68,10 @@ bool test_xiaomi(CNetHttp& http, std::vector<std::string>& headers, std::string 
 	http.http.dwPort = 443;
 	http.http.querystring = "?id=" + packetname;
 	http.http.headers = headers;
-	http.perform_get(false,false,&response);
+	http.perform_get(false,false);
 	//查找结果
 	std::string value;
-	value.append((char*)response.contents(), response.size());
+	value.append((char*)http.http.response.contents(), http.http.response.size());
 	const char* notfindtag = "The URL has moved <a href=";
 	const char* findtag = "class=\"intro-titles\"";
 	int pos = value.find(findtag);
