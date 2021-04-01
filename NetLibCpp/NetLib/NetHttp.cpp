@@ -4,6 +4,7 @@
 
 #pragma comment(lib,"libcurl.lib")
 
+
 CURL *curl=NULL;
 
 CNetHttp::CNetHttp(void)
