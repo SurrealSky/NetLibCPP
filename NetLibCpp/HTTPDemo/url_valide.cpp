@@ -22,7 +22,9 @@ bool get_valide(CNetHttp& http, std::string url,std::vector<std::string>& header
 	http.http.url = url;
 	http.http.dwPort = port;
 	http.http.headers = headers;
-	http.perform_get(false,false);
+	http.http.retCode = 0;//重置
+	bool isSucc=http.perform_get(false,false);
+	if (!isSucc) return false;
 	if (http.http.retCode == 200 || (http.http.retCode >= 300 && http.http.retCode < 400))
 	{
 		return true;
@@ -82,12 +84,20 @@ void xlsx_host_valide(const char* filepath, const char* result)
 		xlnt::range rows = ws.rows();
 		int ColLength = cols.length();
 		int RowLength = rows.length();
-		//std::cout << "test有效列数为: " << ColLength << std::endl;
-		//std::cout << "test有效行数为: " << RowLength << std::endl;
-		for (int i = 10; i < 15/*RowLength*/; i++)
+		xlnt::workbook wbsave;
+		xlnt::worksheet wssave = wbsave.active_sheet();
+		for (int i = 10; i < RowLength; i++)
 		{
 			//取出host
 			std::string host = rows[i][1].value<std::string>();
+			if (host.find("http://") != host.npos)
+			{
+				host = host.substr(7, host.size() - 7);
+			}
+			else if (host.find("https://") != host.npos)
+			{
+				host = host.substr(8, host.size() - 8);
+			}
 			bool isValide = false;
 			//尝试拼接HTTP
 			std::string httphost = "http://" + host;
@@ -104,17 +114,20 @@ void xlsx_host_valide(const char* filepath, const char* result)
 					isValide = true;
 				}
 			}
-			if (!isValide)
+			if (isValide)
 			{
-				//打开网站失败
-				ws.cell(3, i+1).value("open failed!");
+				//打开网站成功
+				wssave.cell(1, i - 9).value(host.c_str());
+				//wssave.cell(2, i - 9).value("open succ!");
+				
 			}
-			else
-			{
-				ws.cell(3, i+1).value("open succ!");
-			}
+			//else
+			//{
+			//	wssave.cell(1, i-9).value(host.c_str());
+			//	wssave.cell(2, i - 9).value("open failed!");
+			//}
 		}
+		wbsave.save("C:\\Users\\taiji\\Desktop\\2.xlsx");
 	}
-	wb.save("C:\\Users\\taiji\\Desktop\\3.xlsx");
 	http.UnInitialize();
 }
