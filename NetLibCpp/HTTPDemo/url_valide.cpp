@@ -1,6 +1,7 @@
 #include <iostream>
 #include<fstream>
 #include<map>
+#include<vector>
 #include"common.h"
 #include<xlnt\xlnt.hpp>
 
@@ -130,4 +131,74 @@ void xlsx_host_valide(const char* filepath, const char* result)
 		wbsave.save("C:\\Users\\taiji\\Desktop\\2.xlsx");
 	}
 	http.UnInitialize();
+}
+
+void xlsx_fz_convert(const char* filepath, const char* result)
+{
+	//输入文件
+	int err = 0;
+	xlnt::workbook wb;
+	wb.load(filepath);
+	std::vector<std::string> names = wb.sheet_titles();
+	for (int i = 0; i < names.size(); i++)
+	{
+		xlnt::worksheet ws = wb.sheet_by_title(names[i]);
+		xlnt::range cols = ws.columns();
+		xlnt::range rows = ws.rows();
+		int ColLength = cols.length();
+		int RowLength = rows.length();
+		xlnt::workbook wbbook;
+		xlnt::worksheet wssheet = wbbook.active_sheet();
+		wssheet.cell(1, 1).value("keywords");
+		wssheet.cell(2, 1).value("alarmDefraudType");
+		wssheet.cell(3, 1).value("convert");
+		for (int i = 2; i < RowLength; i++)
+		{
+			//取出说明
+			std::string keywords = rows[i][0].value<std::string>();
+			std::string alarmDefraudType = rows[i][1].value<std::string>();
+			//计算covert
+			std::string convert = keywords;
+			std::string strand = " and ";
+			while (true) {
+				std::string::size_type   pos(0);
+				if ((pos = convert.find(strand.c_str())) != std::string::npos)
+					convert.replace(pos, strand.size(), "AND");
+				else   
+					break;
+			}
+			//if (keywords.find(' ') != std::string::npos)
+			//{
+			//	//找到空格
+			//	char* p;
+			//	const char *d = " ";
+			//	std::vector<std::string> strs;
+			//	p = strtok((char*)(keywords.c_str()), d);
+			//	while (p)
+			//	{
+			//		if (strcmp(p, "and") == 0)
+			//		{
+			//			strs.push_back("AND");
+			//		}
+			//			strs.push_back(p);
+			//		}
+			//		p = strtok(NULL, d);
+			//	}
+			//	//转换拼接
+			//	for (int i = 0; i < strs.size(); i++)
+			//	{
+			//		convert += strs[i];
+			//	}
+			//}
+			//else
+			//{
+			//	//没有空格
+			//	convert = keywords;
+			//}
+			wssheet.cell(1, i).value(keywords.c_str());
+			wssheet.cell(2, i).value(alarmDefraudType.c_str());
+			wssheet.cell(3, i).value(convert.c_str());
+		}
+		wbbook.save("C:\\Users\\taiji\\Desktop\\2.xlsx");
+	}
 }

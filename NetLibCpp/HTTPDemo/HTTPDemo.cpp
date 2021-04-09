@@ -2,9 +2,7 @@
 //
 
 
-
-extern void txt_host_valide(const char* filepath, const char* result);
-extern void xlsx_host_valide(const char* filepath, const char* result);
+extern void xlsx_fz_convert(const char* filepath, const char* result);
 
 
 int main()
@@ -15,5 +13,5 @@ int main()
 
 	const char* srcfile = "C:\\Users\\taiji\\Desktop\\1.xlsx";
 	const char* dstfile = "C:\\Users\\taiji\\Desktop\\2.xlsx";
-	xlsx_host_valide(srcfile,dstfile);
+	xlsx_fz_convert(srcfile,dstfile);
 }
