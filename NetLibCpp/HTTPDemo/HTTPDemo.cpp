@@ -2,7 +2,7 @@
 //
 
 
-extern void xlsx_fz_convert(const char* filepath, const char* result);
+extern void xlsx_host_valide(const char* filepath, const char* result);
 
 
 int main()
@@ -11,7 +11,7 @@ int main()
 	//const char* dstfile = "C:\\Users\\taiji\\Desktop\\DOMAIN_nb_1_result.txt";
 	//txt_host_valide(srcfile,dstfile);
 
-	const char* srcfile = "C:\\Users\\taiji\\Desktop\\1.xlsx";
+	const char* srcfile = "C:\\Users\\taiji\\Desktop\\FZ.xlsx";
 	const char* dstfile = "C:\\Users\\taiji\\Desktop\\2.xlsx";
-	xlsx_fz_convert(srcfile,dstfile);
+	xlsx_host_valide(srcfile,dstfile);
 }

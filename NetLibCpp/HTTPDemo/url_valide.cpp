@@ -87,45 +87,43 @@ void xlsx_host_valide(const char* filepath, const char* result)
 		int RowLength = rows.length();
 		xlnt::workbook wbsave;
 		xlnt::worksheet wssave = wbsave.active_sheet();
-		for (int i = 10; i < RowLength; i++)
+		for (int i = 1,j=0; i < /*RowLength*/146; i++,j++)
 		{
 			//取出host
-			std::string host = rows[i][1].value<std::string>();
-			if (host.find("http://") != host.npos)
+			std::string host = rows[i][3].value<std::string>();
+			if (get_valide(http, host, headers))
 			{
-				host = host.substr(7, host.size() - 7);
+				wssave.cell(1, j).value(host.c_str());
 			}
-			else if (host.find("https://") != host.npos)
-			{
-				host = host.substr(8, host.size() - 8);
-			}
-			bool isValide = false;
-			//尝试拼接HTTP
-			std::string httphost = "http://" + host;
-			if (get_valide(http, httphost, headers))
-			{
-				isValide = true;
-			}
-			else
-			{
-				//尝试拼接HTTPS
-				std::string httpshost = "https://" + host;
-				if (get_valide(http, httpshost, headers))
-				{
-					isValide = true;
-				}
-			}
-			if (isValide)
-			{
-				//打开网站成功
-				wssave.cell(1, i - 9).value(host.c_str());
-				//wssave.cell(2, i - 9).value("open succ!");
-				
-			}
+			//if (host.find("http://") != host.npos)
+			//{
+			//	host = host.substr(7, host.size() - 7);
+			//}
+			//else if (host.find("https://") != host.npos)
+			//{
+			//	host = host.substr(8, host.size() - 8);
+			//}
+			//bool isValide = false;
+			////尝试拼接HTTP
+			//std::string httphost = "http://" + host;
+			//if (get_valide(http, httphost, headers))
+			//{
+			//	isValide = true;
+			//}
 			//else
 			//{
-			//	wssave.cell(1, i-9).value(host.c_str());
-			//	wssave.cell(2, i - 9).value("open failed!");
+			//	//尝试拼接HTTPS
+			//	std::string httpshost = "https://" + host;
+			//	if (get_valide(http, httpshost, headers))
+			//	{
+			//		isValide = true;
+			//	}
+			//}
+			//if (isValide)
+			//{
+			//	//打开网站成功
+			//	wssave.cell(1, i - 9).value(host.c_str());
+			//	
 			//}
 		}
 		wbsave.save("C:\\Users\\taiji\\Desktop\\2.xlsx");
