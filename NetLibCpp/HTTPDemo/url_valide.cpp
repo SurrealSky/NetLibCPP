@@ -87,13 +87,14 @@ void xlsx_host_valide(const char* filepath, const char* result)
 		int RowLength = rows.length();
 		xlnt::workbook wbsave;
 		xlnt::worksheet wssave = wbsave.active_sheet();
-		for (int i = 1,j=0; i < /*RowLength*/146; i++,j++)
+		unsigned int line = 1;
+		for (int i = 1; i < /*RowLength*/146; i++)
 		{
 			//È¡³öhost
 			std::string host = rows[i][3].value<std::string>();
 			if (get_valide(http, host, headers))
 			{
-				wssave.cell(1, j).value(host.c_str());
+				wssave.cell(1, line++).value(host.c_str());
 			}
 			//if (host.find("http://") != host.npos)
 			//{
