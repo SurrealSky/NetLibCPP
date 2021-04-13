@@ -88,10 +88,10 @@ void xlsx_host_valide(const char* filepath, const char* result)
 		xlnt::workbook wbsave;
 		xlnt::worksheet wssave = wbsave.active_sheet();
 		unsigned int line = 1;
-		for (int i = 1; i < /*RowLength*/146; i++)
+		for (int i = 1; i < /*RowLength*/16858; i++)
 		{
 			//È¡³öhost
-			std::string host = rows[i][3].value<std::string>();
+			std::string host = rows[i][1].value<std::string>();
 			if (get_valide(http, host, headers))
 			{
 				wssave.cell(1, line++).value(host.c_str());

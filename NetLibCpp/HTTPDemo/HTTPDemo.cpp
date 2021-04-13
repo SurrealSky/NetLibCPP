@@ -11,7 +11,7 @@ int main()
 	//const char* dstfile = "C:\\Users\\taiji\\Desktop\\DOMAIN_nb_1_result.txt";
 	//txt_host_valide(srcfile,dstfile);
 
-	const char* srcfile = "C:\\Users\\taiji\\Desktop\\FZ.xlsx";
+	const char* srcfile = "C:\\Users\\taiji\\Desktop\\FZ2.xlsx";
 	const char* dstfile = "C:\\Users\\taiji\\Desktop\\2.xlsx";
 	xlsx_host_valide(srcfile,dstfile);
 }
