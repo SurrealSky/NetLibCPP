@@ -93,8 +93,8 @@ bool CNetHttp::perform_get(bool isProxy, bool isdefinePort)
 	if (curl)
 	{
 		curl_easy_setopt(curl, CURLOPT_URL, (http.host + http.url + http.querystring).c_str());
-		curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 10);  //设置访问的超时
+		curl_easy_setopt(curl, CURLOPT_VERBOSE, 0L);
+		curl_easy_setopt(curl, CURLOPT_TIMEOUT, 1);  //设置访问的超时
 		if(isdefinePort)
 			curl_easy_setopt(curl, CURLOPT_PORT, http.dwPort);
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &process_data);
